@@ -19,7 +19,10 @@ export async function GET(request: NextRequest) {
 
     const email = session.user.email;
 
-    const categories = await prisma.blog.findMany({
+    // Define the type for each item in the categories array
+    type CategoryItem = { category: string | null };
+
+    const categories: CategoryItem[] = await prisma.blog.findMany({
       where: {
         email,
       },
@@ -29,16 +32,14 @@ export async function GET(request: NextRequest) {
       distinct: ['category'],
     });
 
-
-    type CategoryItem = { category: string | null };
+    // Ensure the items in the categories array are typed correctly
     const uniqueCategories = Array.from(
       new Set(
         categories
-          .map((item: CategoryItem) => item.category) 
+          .map((item: CategoryItem) => item.category) // Explicitly typing 'item'
           .filter((category): category is string => {
             return typeof category === "string" && category.trim() !== "";
           })
-
           .map((category) => category.trim().toLowerCase())
       )
     );
@@ -51,9 +52,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching unique categories:", error);
     return NextResponse.json({
-      message: `Something went wrong: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
+      message: `Something went wrong: ${error instanceof Error ? error.message : String(error)}`,
       status: 500,
       success: false,
     });
