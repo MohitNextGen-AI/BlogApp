@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";  
+import { authOptions } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -29,18 +29,17 @@ export async function GET(request: NextRequest) {
       distinct: ['category'],
     });
 
-    // Define a type for the category items
-    type CategoryItem = { category: string | null };
 
-    // Ensure the items in the categories array are typed correctly
+    type CategoryItem = { category: string | null };
     const uniqueCategories = Array.from(
       new Set(
         categories
-          .map((item: CategoryItem) => item.category)
-          .filter((category: string | null): category is string => {
+          .map((item: CategoryItem) => item.category) 
+          .filter((category): category is string => {
             return typeof category === "string" && category.trim() !== "";
           })
-          .map((category: string) => category.trim().toLowerCase())
+
+          .map((category) => category.trim().toLowerCase())
       )
     );
 
@@ -52,7 +51,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching unique categories:", error);
     return NextResponse.json({
-      message: `Something went wrong: ${error instanceof Error ? error.message : String(error)}`,
+      message: `Something went wrong: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
       status: 500,
       success: false,
     });
