@@ -21,7 +21,7 @@ export default function FindCategorise() {
 
   useEffect(() => {
     axios
-      .get(`/api/CategoriesD`)
+      .get(`/api/Categories`)
       .then((res) => {
         setCategories(res.data.data);
       })

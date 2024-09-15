@@ -53,16 +53,15 @@ const formSchema = z.object({
   blogId: z.string().nonempty(),
 });
 
-export default function CommentBord() {
+export default function CommentBoard() {
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const id = pathSegments[pathSegments.length - 1];
   const [comments, setComments] = useState<Comment[]>([]);
-  const [OpenAlert, setOpenAlert] = useState(false);
-  const [EditData, SetEditData] = useState<Comment | null>(null);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [editData, setEditData] = useState<Comment | null>(null);
 
-  // Memoize ViewComments function
-  const ViewComments = useCallback(() => {
+  const viewComments = useCallback(() => {
     axios
       .get(`/api/comments?blogId=${id}`)
       .then((res) => {
@@ -72,15 +71,14 @@ export default function CommentBord() {
           console.log("API response data is not an array");
         }
       })
-      .catch((error: unknown) => {
+      .catch((error) => {
         console.log(error);
       });
   }, [id]);
 
-  // Use ViewComments as a dependency in useEffect
   useEffect(() => {
-    ViewComments();
-  }, [ViewComments]);
+    viewComments();
+  }, [viewComments]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,22 +90,21 @@ export default function CommentBord() {
     },
   });
 
-  // Use EditData and id as dependencies
   useEffect(() => {
-    if (EditData) {
+    if (editData) {
       form.reset({
-        author: EditData.author,
+        author: editData.author,
         email: '',
-        content: EditData.content,
+        content: editData.content,
         blogId: id,
       });
     }
-  }, [EditData, id, form]);
+  }, [editData, id, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      if (EditData) {
-        await axios.put(`/api/comments?UpDateComment=${EditData.id}`, values).then((res) => {
+      if (editData) {
+        await axios.put(`/api/comments?UpDateComment=${editData.id}`, values).then((res) => {
           if (res.data.status === 200) {
             toast.success("Comment updated successfully!");
           } else {
@@ -115,13 +112,13 @@ export default function CommentBord() {
           }
         });
 
-        SetEditData(null);
+        setEditData(null);
       } else {
         await axios.post(`/api/comments`, values);
         toast.success("Comment added successfully!");
       }
 
-      ViewComments();
+      viewComments();
     } catch (error) {
       toast.error("Something went wrong!");
       console.error(error);
@@ -135,15 +132,15 @@ export default function CommentBord() {
     });
   };
 
-  const HandleDelete = (CommentDelete: string) => {
-    if (CommentDelete) {
+  const handleDelete = (commentId: string) => {
+    if (commentId) {
       axios
-        .delete(`/api/comments?CommentId=${CommentDelete}`)
+        .delete(`/api/comments?CommentId=${commentId}`)
         .then((res) => {
-          ViewComments();
+          viewComments();
           toast.error(res.data.message);
         })
-        .catch((error: unknown) => {
+        .catch((error) => {
           console.log(error);
         });
     }
@@ -153,10 +150,10 @@ export default function CommentBord() {
     <>
       <TopButton />
       <div className="mt-10">
-        <h1 className="lg:text-[25px] sm:txet-[18px] bottom-0 ps-10 font-bold">
+        <h1 className="lg:text-[25px] sm:text-[18px] bottom-0 ps-10 font-bold">
           {comments.length} Comments
         </h1>
-        {comments.map((value: Comment, index: number) => (
+        {comments.map((value, index) => (
           <div key={index}>
             <Card className="my-10 lg:w-[70%] sm:w-full mx-auto">
               <CardHeader className="p-2">
@@ -172,7 +169,7 @@ export default function CommentBord() {
                       />
                     </div>
                     <div>
-                      <CardTitle className="capitalize  font-semibold">
+                      <CardTitle className="capitalize font-semibold">
                         <p className="text-[15px] lg:text-[18px]">
                           {value.author}
                         </p>
@@ -194,7 +191,7 @@ export default function CommentBord() {
                           <Button
                             className="hover:border-none"
                             onClick={() => {
-                              SetEditData(value);
+                              setEditData(value);
                               setTimeout(() => {
                                 window.scrollTo({
                                   top: document.body.scrollHeight,
@@ -225,20 +222,20 @@ export default function CommentBord() {
                 </p>
               </CardContent>
             </Card>
-            <AlertDialog open={OpenAlert} onOpenChange={setOpenAlert}>
+            <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete
-                    your blog post.
+                    your comment.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel onClick={() => setOpenAlert(false)}>
                     Cancel
                   </AlertDialogCancel>
-                  <AlertDialogAction onClick={() => HandleDelete(value.id)}>
+                  <AlertDialogAction onClick={() => handleDelete(value.id)}>
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -247,7 +244,7 @@ export default function CommentBord() {
           </div>
         ))}
       </div>
-      <div className="w-full bg-orange-500 rounded-sm border-4 my-8 shadow-2xl  lg:p-10 p-2">
+      <div className="w-full bg-orange-500 rounded-sm border-4 my-8 shadow-2xl lg:p-10 p-2">
         <div className="flex items-center">
           <Image
             src="/image/message_9351583.png"
@@ -325,7 +322,7 @@ export default function CommentBord() {
                     <Textarea
                       {...field}
                       placeholder="Leave A Comment....."
-                      className="lg:h-[250px] resize-none lg:text-[18px] text-[15px]  font-semibold line-clamp-4"
+                      className="lg:h-[250px] resize-none lg:text-[18px] text-[15px] font-semibold line-clamp-4"
                     />
                   </FormControl>
                   <FormMessage />

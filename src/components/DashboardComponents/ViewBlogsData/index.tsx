@@ -48,7 +48,6 @@ export default function ViewBlogsData() {
   const { data: session } = useSession();
   const email = session?.user.email;
 
-  // UseCallback for ViewBlogs to avoid unnecessary re-renders
   const ViewBlogs = useCallback(() => {
     axios
       .get(`/api/BlogsPost?limit=1000`)
@@ -71,7 +70,7 @@ export default function ViewBlogsData() {
         .then(() => {
           setOpenAlert(false);
           SetDeleteId(null);
-          ViewBlogs(); // Refresh blog data
+          ViewBlogs(); 
           toast.success("Blog deleted successfully!");
         })
         .catch((error) => {
@@ -100,9 +99,9 @@ export default function ViewBlogsData() {
   }, [CategoriesValue, email]);
 
   useEffect(() => {
-    ViewBlogs(); // Calling ViewBlogs inside useEffect
+    ViewBlogs();
     axios
-      .get(`/api/Categories`)
+      .get(`/api/CategoriesD`)
       .then((res) => {
         setCategories(res.data.data);
       })
