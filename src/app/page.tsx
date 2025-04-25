@@ -104,7 +104,7 @@ export default async function Home() {
             Join our community of writers and start sharing your experiences with the world.
           </p>
           <Link
-            href="/Dashboard/CreateBlog"
+            href="/Sign-up"
             className="inline-block bg-white text-orange-500 px-8 py-3 rounded-full text-lg font-semibold hover:bg-orange-100 transition-colors"
           >
             Start Writing
