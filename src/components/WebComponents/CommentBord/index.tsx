@@ -106,7 +106,7 @@ export default function CommentBoard() {
       if (editData) {
         await axios.put(`/api/comments?UpDateComment=${editData.id}`, values).then((res) => {
           if (res.data.status === 200) {
-            toast.success("Comment updated successfully!");
+            toast.success(res.data.message);
           } else {
             toast.error(res.data.message);
           }
@@ -114,8 +114,17 @@ export default function CommentBoard() {
 
         setEditData(null);
       } else {
-        await axios.post(`/api/comments`, values);
-        toast.success("Comment added successfully!");
+        await axios.post(`/api/comments`, values)
+        .then((res)=>{
+          if(res.data.status == 200){
+            toast.success(res.data.message);
+          }else{
+            toast.error(res.data.message);
+          }
+        }).catch((error)=>{
+          toast.error("something went wrong !");
+        })
+       
       }
 
       viewComments();
