@@ -4,6 +4,25 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "./db";
 import { compare } from "bcrypt";
 
+// Extend the built-in session types
+declare module "next-auth" {
+  interface User {
+    username?: string;
+  }
+  interface Session {
+    user: {
+      username?: string;
+    } & DefaultSession["user"]
+  }
+}
+
+// Extend the built-in JWT types
+declare module "next-auth/jwt" {
+  interface JWT {
+    username?: string;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   secret: process.env.AUTH_SECRET,
