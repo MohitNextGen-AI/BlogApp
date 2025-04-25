@@ -54,7 +54,7 @@ export default function CreateBlogsForm() {
       descriptions: "",
       category: "",
       writerName: "",
-      email: session?.user.email,
+      email: session?.user?.email || "",
       image: undefined,
     },
   });
