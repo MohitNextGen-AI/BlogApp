@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
 
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     type CategoryItem = { category: string | null };
 
-    const categories: CategoryItem[] = await prisma.blog.findMany({
+    const categories: CategoryItem[] = await db.blog.findMany({
       where: {
         email,
       },

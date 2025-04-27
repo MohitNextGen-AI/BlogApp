@@ -1,12 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+import { NextRequest, NextResponse } from "next/server";
+import { db } from '@/lib/db';
+
 
 export async function GET(request: NextRequest) {
   try {
     // Fetch categories from the database with explicit typing
-    const categories = await prisma.blog.findMany({
+    const categories = await db.blog.findMany({
       select: {
         category: true,
       },

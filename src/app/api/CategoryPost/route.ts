@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+
+import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+
 
 export const GET = async (request : NextRequest) => {
   const url = new URL(request.url);
@@ -18,13 +19,13 @@ export const GET = async (request : NextRequest) => {
     
     // Fetch posts with the specified category
     if(category === 'All'){
-        const posts = await prisma.blog.findMany();
+        const posts = await db.blog.findMany();
         return NextResponse.json(
           { data: posts, success: true },
           { status: 200 }
         );
     }else{
-       const posts = await prisma.blog.findMany({
+       const posts = await db.blog.findMany({
         where: {
           category: {
             equals: category,

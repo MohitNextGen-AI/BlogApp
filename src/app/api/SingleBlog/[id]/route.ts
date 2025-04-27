@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+
+import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-const prisma : any = new PrismaClient();
 
 export const GET = async (req: NextRequest, context: any) => {
   const { params } = context;
@@ -17,7 +17,7 @@ export const GET = async (req: NextRequest, context: any) => {
       return NextResponse.json({ message: "Invalid ID format!" }, { status: 400 });
     }
 
-    const data = await prisma.Blog.findUnique({
+    const data = await db.Blog.findUnique({
       where: {
         id: id,
       },
