@@ -6,12 +6,7 @@ import { prisma } from '@/lib/db';
 export async function GET(request: NextRequest) {
   try {
     // Fetch categories from the database with explicit typing
-    const categories = await prisma.blog.findMany({
-      select: {
-        category: true,
-      },
-      distinct: ['category'],
-    });
+    const categories = await prisma.blog.findMany();
 
     // Ensure the items in the categories array are typed correctly
     const uniqueCategories = Array.from(
