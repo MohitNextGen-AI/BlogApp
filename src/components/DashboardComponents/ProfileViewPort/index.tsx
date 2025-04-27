@@ -38,9 +38,6 @@ export  const  ProfileViewPort : any =  ()=> {
     return <LoadingSpinner />;
   }
 
-  if (!session) {
-    return router.push('/Sign-in')
-  }
 
   const imageUrl = profileData?.userphoto?.startsWith('/profileimages')
   ? profileData.userphoto
