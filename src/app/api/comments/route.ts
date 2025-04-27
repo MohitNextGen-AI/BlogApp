@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/db";
 
 
 export async function POST(request: Request) {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const existingComment = await db.comment.findFirst({
+    const existingComment = await prisma.comment.findFirst({
       where: {
         email,
         blogId: Number(blogId),
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const newComment = await db.comment.create({
+    const newComment = await prisma.comment.create({
       data: {
         author,
         content,
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const comments = await db.comment.findMany({
+    const comments = await prisma.comment.findMany({
       where: {
         blogId: Number(blogId),
       },
@@ -91,7 +91,7 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    const comments = await db.comment.delete({
+    const comments = await prisma.comment.delete({
       where: {
         id: Number(CommentId),
       },
@@ -134,7 +134,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ message: "Invalid Comment Id", status: 400 });
     }
 
-    const comment = await db.comment.findUnique({
+    const comment = await prisma.comment.findUnique({
       where: { id: parsedId },
     });
 
@@ -146,7 +146,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ status: 400, message: "Invalid Email!" });
     }
 
-    const updatedComment = await db.comment.update({
+    const updatedComment = await prisma.comment.update({
       where: {
         id: parsedId,
       },

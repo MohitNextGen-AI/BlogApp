@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from "uuid";
-import { db } from '@/lib/db';
+import { prisma } from '@/lib/db';
 
 // GET Blogs API
 export const GET = async (request: NextRequest) => {
@@ -13,12 +13,12 @@ export const GET = async (request: NextRequest) => {
   const skip = (page - 1) * limit;
 
   try {
-    const data = await db.blog.findMany({
+    const data = await prisma.blog.findMany({
       skip: skip,
       take: limit,
     });
 
-    const totalItems = await db.blog.count();
+    const totalItems = await prisma.blog.count();
     const totalPages = Math.ceil(totalItems / limit);
 
     return NextResponse.json({
@@ -65,7 +65,7 @@ export const POST = async (req: NextRequest) => {
     const buffer = Buffer.from(await image.arrayBuffer());
     fs.writeFileSync(imagePath, buffer);
 
-    const newBlog = await db.blog.create({
+    const newBlog = await prisma.blog.create({
       data: {
         title,
         shotDescriptions,
@@ -123,7 +123,7 @@ export const PUT = async (request: NextRequest) => {
       fs.writeFileSync(filePath, buffer);
     }
 
-    const updatedPost = await db.blog.update({
+    const updatedPost = await prisma.blog.update({
       where: { id },
       data: {
         title,
@@ -168,7 +168,7 @@ export const DELETE = async (request: NextRequest) => {
     }
 
 
-    const result = await db.$transaction(async (tx:any) => {
+    const result = await prisma.$transaction(async (tx:any) => {
 
       const deleteCommentsResult = await tx.comment.deleteMany({
         where: { blogId: id }, 

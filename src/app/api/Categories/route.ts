@@ -1,12 +1,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from '@/lib/db';
+import { prisma } from '@/lib/db';
 
 
 export async function GET(request: NextRequest) {
   try {
     // Fetch categories from the database with explicit typing
-    const categories = await db.blog.findMany({
+    const categories = await prisma.blog.findMany({
       select: {
         category: true,
       },

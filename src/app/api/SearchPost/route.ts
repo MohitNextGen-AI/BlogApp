@@ -1,5 +1,5 @@
 
-import { db } from '@/lib/db';
+import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 
@@ -8,7 +8,7 @@ export const GET = async (request: NextRequest) => {
     const url = new URL(request.url);
     const query = url.searchParams.get("query") || "";
 
-    const results = await db.blog.findMany({
+    const results = await prisma.blog.findMany({
       where: {
         title: {
           contains: query.trim(),

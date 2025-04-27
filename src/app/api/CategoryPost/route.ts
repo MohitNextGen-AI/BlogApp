@@ -1,5 +1,5 @@
 
-import { db } from '@/lib/db';
+import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 
@@ -19,13 +19,13 @@ export const GET = async (request : NextRequest) => {
     
     // Fetch posts with the specified category
     if(category === 'All'){
-        const posts = await db.blog.findMany();
+        const posts = await prisma.blog.findMany();
         return NextResponse.json(
           { data: posts, success: true },
           { status: 200 }
         );
     }else{
-       const posts = await db.blog.findMany({
+       const posts = await prisma.blog.findMany({
         where: {
           category: {
             equals: category,

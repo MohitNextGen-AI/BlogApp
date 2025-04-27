@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { db } from "../lib/db";
+import { prisma } from "../lib/db";
 
 async function getFeaturedBlogs() {
-  const blogs = await db.blog.findMany({
+  const blogs = await prisma.blog.findMany({
     take: 3,
     orderBy: {
       createdAt: 'desc'

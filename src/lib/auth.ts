@@ -1,7 +1,7 @@
 import NextAuth, { NextAuthOptions, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { db } from "./db";
+import { prisma } from "./db";
 import { compare } from "bcrypt";
 
 // Extend the built-in session types
@@ -24,7 +24,7 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(prisma),
   secret: process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
@@ -39,13 +39,13 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials:any, req):Promise<any> {
         
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
 
-        const existingUser = await db.profile.findUnique({
+        const existingUser = await prisma.profile.findUnique({
           where: { email: credentials.email },
         });
 

@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs';
 import path from 'path';
@@ -23,7 +23,7 @@ export const POST = async (request: NextRequest) => {
 
   try {
 
-    const existingUser = await db.profile.findUnique({
+    const existingUser = await prisma.profile.findUnique({
         where: { email },
       });
   
@@ -43,7 +43,7 @@ export const POST = async (request: NextRequest) => {
 
  
 
-    const profileData = await db.profile.create({
+    const profileData = await prisma.profile.create({
       data: {
         username,
         password : hashedPassword,
@@ -77,7 +77,7 @@ export const POST = async (request: NextRequest) => {
 export const GET = async  (request : NextRequest) =>{
     try{
 
-        const profileData = await db.profile.findMany()
+        const profileData = await prisma.profile.findMany()
 
         return NextResponse.json({
             status : 200  ,
@@ -132,7 +132,7 @@ export const PUT = async (request: NextRequest) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const existingProfile = await db.profile.findUnique({
+    const existingProfile = await prisma.profile.findUnique({
       where: { email },
     });
 
@@ -143,7 +143,7 @@ export const PUT = async (request: NextRequest) => {
       });
     }
 
-    const profileUpdateData = await db.profile.update({
+    const profileUpdateData = await prisma.profile.update({
       where: { email },
       data: {
         username,

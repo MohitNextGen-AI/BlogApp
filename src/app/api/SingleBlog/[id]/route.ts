@@ -1,5 +1,5 @@
 
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -17,7 +17,7 @@ export const GET = async (req: NextRequest, context: any) => {
       return NextResponse.json({ message: "Invalid ID format!" }, { status: 400 });
     }
 
-    const data = await db.Blog.findUnique({
+    const data = await prisma.blog.findUnique({
       where: {
         id: id,
       },

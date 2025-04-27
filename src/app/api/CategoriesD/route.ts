@@ -2,7 +2,7 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/db";
 
 
 export async function GET(request: NextRequest) {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     type CategoryItem = { category: string | null };
 
-    const categories: CategoryItem[] = await db.blog.findMany({
+    const categories: CategoryItem[] = await prisma.blog.findMany({
       where: {
         email,
       },
